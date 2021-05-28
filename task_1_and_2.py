@@ -82,17 +82,27 @@ class LinkedBST(AbstractCollection):
         """If item matches an item in self, returns the
         matched item, or None otherwise."""
 
-        def recurse(node):
-            if node is None:
-                return None
-            elif item == node.data:
-                return node.data
-            elif item < node.data:
-                return recurse(node.left)
-            else:
-                return recurse(node.right)
 
-        return recurse(self._root)
+        current_node = self._root
+        curent_data = None
+
+
+        while True:
+            if current_node is None:
+                return None
+    
+            curent_data = current_node.data
+            if curent_data == None:
+                return None
+            elif item < curent_data:
+                current_node = current_node.left
+            elif item > curent_data:
+                current_node = current_node.right
+            elif item == curent_data:
+                break
+        
+        return curent_data
+
 
     # Mutator methods
     def clear(self):
@@ -103,28 +113,34 @@ class LinkedBST(AbstractCollection):
     def add(self, item):
         """Adds item to the tree."""
 
-        # Helper function to search for item's position
-        def recurse(node):
-            # New item is less, go left until spot is found
-            if item < node.data:
-                if node.left == None:
-                    node.left = BSTNode(item)
-                else:
-                    recurse(node.left)
-            # New item is greater or equal,
-            # go right until spot is found
-            elif node.right == None:
-                node.right = BSTNode(item)
+        def _add_child(parent, item):
+            '''Help function for adding a child. The parent must have free brunches'''
+            if item < parent.data:
+                parent.left == BSTNode(item)
             else:
-                recurse(node.right)
-                # End of recurse
+                parent.right == BSTNode(item)
 
         # Tree is empty, so new item goes at the root
         if self.isEmpty():
             self._root = BSTNode(item)
         # Otherwise, search for the item's spot
         else:
-            recurse(self._root)
+            pearent_node = None
+            current_node = self._root
+            curent_data = None
+
+            while True:
+                if current_node is None:
+                    _add_child(pearent_node, item)
+                    break
+
+                pearent_node = current_node
+                # New item is less, go left until spot is found
+                if item < current_node.data:
+                    current_node = current_node.left
+                # New item is greater or equal
+                else:
+                    current_node = current_node.right
         self._size += 1
 
     def remove(self, item):
@@ -342,7 +358,7 @@ class LinkedBST(AbstractCollection):
         random_list = [random.choice(list_of_words) for _ in range(test_size)]
 
         bst_sorted, bst_random, bst_balanced = LinkedBST(), LinkedBST(), LinkedBST()
-        for word in sorted(random_list[:900]):
+        for word in sorted(random_list):
             bst_sorted.add(word)
 
         for word in random_list:
@@ -352,13 +368,13 @@ class LinkedBST(AbstractCollection):
             bst_balanced.add(word)
         bst_balanced.rebalance()
 
-        now = time.time()
-        for word in random_list:
-            word in list_of_words
-        print(f'Size of testing: {test_size}\n')
-        print(f'List time: {time.time() - now}\n')
+        # now = time.time()
+        # for word in random_list:
+        #     word in random_list
+        # print(f'Size of testing: {test_size}\n')
+        # print(f'List time: {time.time() - now}\n')
 
-        for bst in [(bst_sorted, 'Sorted tree(max size: 900)'),
+        for bst in [(bst_sorted, 'Sorted tree'),
                     (bst_random, 'Random tree'),
                     (bst_balanced, 'Balanced tree')]:
 
